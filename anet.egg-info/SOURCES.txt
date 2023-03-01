@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+./anet/__init__.py
+anet.egg-info/PKG-INFO
+anet.egg-info/SOURCES.txt
+anet.egg-info/dependency_links.txt
+anet.egg-info/requires.txt
+anet.egg-info/top_level.txt

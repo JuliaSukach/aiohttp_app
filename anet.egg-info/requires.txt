@@ -1,0 +1,4 @@
+aiohttp~=3.8.4
+setuptools~=57.0.0
+aiohttp-jinja2==1.5.1
+gunicorn==20.1.0
