@@ -5,12 +5,11 @@ from tortoise.contrib.aiohttp import register_tortoise
 from controller import controller_setup
 from anet import settings
 from .middles import check_data, check_info
+from .tasks import parser
 
 
 def create_app():
-    app = web.Application(
-        middlewares=(check_data, check_info)
-    )  # create application
+    app = web.Application(middlewares=(check_data, check_info))  # create application
     jinja_setup(
         app,
         loader=jinja2.FileSystemLoader(
@@ -23,6 +22,7 @@ def create_app():
     )
     controller_setup(app, root_urls='anet.web.root.urls')  # entry point
     register_tortoise(app, config=settings.DB_CONFIG, generate_schemas=True)
+    app.cleanup_ctx.extend([parser])
     return app
 
 
