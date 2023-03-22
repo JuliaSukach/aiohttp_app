@@ -5,7 +5,7 @@ from tortoise.contrib.aiohttp import register_tortoise
 from controller import controller_setup
 from anet import settings
 from .middles import check_data, check_info
-from .tasks import parser
+# from .tasks import parser
 
 
 def create_app():
@@ -22,7 +22,7 @@ def create_app():
     )
     controller_setup(app, root_urls='anet.web.root.urls')  # entry point
     register_tortoise(app, config=settings.DB_CONFIG, generate_schemas=True)
-    app.cleanup_ctx.extend([parser])
+    # app.cleanup_ctx.extend([parser])
     return app
 
 

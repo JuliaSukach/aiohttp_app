@@ -1,8 +1,16 @@
 import json
 from aiohttp import web
-from tortoise.exceptions import DoesNotExist
 from datetime import datetime
 from anet.api.user.models import User
+
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from anet.settings import EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
+
+from anet.utils.crypto import fernet
+import base64
 
 
 class Serializer(json.JSONEncoder):
@@ -21,7 +29,39 @@ class UserView(web.View):
     async def post(self):
         data = await self.request.json()
         new_user = await User.create(**data)
-        return web.json_response({'result': f'{new_user.id=}'}, status=200)
+
+        context = ssl.create_default_context()
+
+        # send email to new user
+        msg = MIMEMultipart()
+        msg['Subject'] = 'Welcome to My Website!'
+        msg['From'] = EMAIL_HOST_USER
+        msg['To'] = new_user.email
+
+        # create message body
+        link = f"http://localhost:8000/activate/{new_user.id}"
+        encrypted_link = fernet.encrypt(link.encode()).decode()
+        encoded_link = base64.urlsafe_b64encode(encrypted_link.encode()).decode()
+
+        final_link = f"http://localhost:8000/activate/{encoded_link}"
+        body = f"Dear {new_user.username},\n\nWelcome to My Website!" \
+               f"Thank you for creating an account." \
+               f"Please click on the following link to activate your account: {final_link}"
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        try:
+            server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
+            server.starttls(context=context)
+            server.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+
+            server.sendmail(EMAIL_HOST_USER, new_user.email, msg.as_string())
+        except Exception as e:
+            print(e)
+        finally:
+            server.quit()
+
+        return web.json_response({'result': f'{new_user.username=}'}, status=200)
 
     async def put(self):
         data = await self.request.json()
@@ -50,3 +90,4 @@ class UserView(web.View):
         user = await User.get(username=data['username'])
         await user.delete()
         return web.json_response({'result': f'User: {user.id=} was deleted'}, status=200)
+

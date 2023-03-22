@@ -1,7 +1,9 @@
 import os
 import pathlib
 
-__all__ = ('BASE_DIR', 'DB_CONFIG', 'API_V')
+__all__ = ('BASE_DIR', 'DB_CONFIG', 'API_V',
+           'EMAIL_HOST', 'EMAIL_HOST_USER', 'EMAIL_PORT', 'EMAIL_HOST_PASSWORD'
+           )
 
 BASE_DIR = pathlib.Path(__file__).parent.parent.absolute()
 
@@ -30,4 +32,9 @@ DB_CONFIG = {
 }
 
 API_V = '1.0'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'yuliyasukach123@gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_PASSWORD = 'nwfrmrqvnhjcbmgs'
 

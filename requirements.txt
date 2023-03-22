@@ -6,3 +6,8 @@ tortoise-orm==0.19.3
 asyncpg==0.27.0
 
 
+
+controller~=0.4.1
+anet~=0.0.0
+Jinja2~=3.1.2
+cryptography~=39.0.2
